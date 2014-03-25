@@ -1,4 +1,4 @@
 xlsx2json
 =========
 
-Convert xlsx to json.
+Convert xlsx to JSON.

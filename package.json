@@ -15,7 +15,7 @@
         "rewire": "^2.0.0"
     },
     "scripts": {
-        "test": "./node_modules/.bin/mocha test/public.js"
+        "test": "./node_modules/.bin/mocha test/xlsx2json.test.js"
     },
     "repository": {
         "type": "git",

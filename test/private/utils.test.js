@@ -1,14 +1,16 @@
 var expect = require( "chai" ).expect,
-    rewire = require( "rewire" ),
     sinon = require( "sinon" ),
-    myModulePath =  "../lib/xlsx2json.js";
+    rewire = require( "rewire"),
 
-describe( "private functions", function(){
+    utilModulePath = "../../lib/private/utils.js",
+    utils =  require( utilModulePath );
+
+describe( "private functions / utils", function(){
     
     describe( "evalColumnPosition", function(){
-        var evalColumnPosition = rewire( myModulePath ).__get__( "evalColumnPosition" );
+        var evalColumnPosition = utils.evalColumnPosition;
 
-        it( "引数が数値の場合、その数値が返却する。", function(){
+        it( "引数が数値の場合、その数値を返却する。", function(){
             expect( evalColumnPosition( 5 ) ).to.equal( 5 );
             expect( evalColumnPosition( "5" ) ).to.equal( 5 );
         } );
@@ -32,7 +34,7 @@ describe( "private functions", function(){
     } );
 
     describe( "evalColumnIndex", function(){
-        var evalColumnIndex = rewire( myModulePath ).__get__( "evalColumnIndex" );
+        var evalColumnIndex = utils.evalColumnIndex;
 
         it( "引数で与えられたone-basedの列位置を、zero-basedに変換して返却する。", function(){
             expect( evalColumnIndex( 5 ) ).to.equal( 4 );
@@ -42,34 +44,34 @@ describe( "private functions", function(){
         describe( "引数が過去に与えられた値と同じ場合、_.memoizeがキャッシュした値を返却する。", function(){
 
             it( "evalColumnIndexを実行する前は、evalColumnPositionは呼ばれていない。", function(){
-                var myModule = rewire( myModulePath ),
-                    spyEvalColumnPosition = sinon.spy( myModule.__get__( "evalColumnPosition" ) );
-                
-                myModule.__set__( "evalColumnPosition", spyEvalColumnPosition );
-                
+                var rewiredUtilModule = rewire( utilModulePath ),
+                    spyEvalColumnPosition = sinon.spy( rewiredUtilModule.__get__( "evalColumnPosition" ) );
+
+                rewiredUtilModule.__set__( "evalColumnPosition", spyEvalColumnPosition );
+
                 expect( spyEvalColumnPosition.called ).to.be.false;
             } );
-            
+
             it( "evalColumnIndexを2度同じ引数で実行しても、2度目のevalColumnPositionは呼ばれていない。", function(){
-                var myModule = rewire( myModulePath ),
-                    evalColumnIndex = myModule.__get__( "evalColumnIndex" ),
-                    spyEvalColumnPosition = sinon.spy( myModule.__get__( "evalColumnPosition" ) );
+                var rewiredUtilModule = rewire( utilModulePath ),
+                    evalColumnIndex = rewiredUtilModule.__get__( "evalColumnIndex" ),
+                    spyEvalColumnPosition = sinon.spy( rewiredUtilModule.__get__( "evalColumnPosition" ) );
 
-                myModule.__set__( "evalColumnPosition", spyEvalColumnPosition );
+                rewiredUtilModule.__set__( "evalColumnPosition", spyEvalColumnPosition );
 
                 evalColumnIndex( 8 );
                 evalColumnIndex( 8 );
-                
+
                 expect( spyEvalColumnPosition.called ).to.be.true;
                 expect( spyEvalColumnPosition.calledTwice ).to.be.false;
             } );
 
             it( "evalColumnIndexを2度、異なる引数で実行すると、evalColumnPositionは2度実行される。", function(){
-                var myModule = rewire( myModulePath ),
-                    evalColumnIndex = myModule.__get__( "evalColumnIndex" ),
-                    spyEvalColumnPosition = sinon.spy( myModule.__get__( "evalColumnPosition" ) );
+                var rewiredUtilModule = rewire( utilModulePath ),
+                    evalColumnIndex = rewiredUtilModule.__get__( "evalColumnIndex" ),
+                    spyEvalColumnPosition = sinon.spy( rewiredUtilModule.__get__( "evalColumnPosition" ) );
 
-                myModule.__set__( "evalColumnPosition", spyEvalColumnPosition );
+                rewiredUtilModule.__set__( "evalColumnPosition", spyEvalColumnPosition );
 
                 evalColumnIndex( 10 );
                 evalColumnIndex( 11 );

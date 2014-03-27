@@ -4,7 +4,7 @@ var DEBUG = true,
     xlsx2json = require( "../lib/xlsx2json.js" );
 
 describe( "xlsx2json", function(){
-    
+
     describe( "arguments", function(){
         it( "xlsx2json( xlsxFilePath )", function( done ){
             xlsx2json( "test/xlsx/data_only.xlsx" ).done( function( result ){

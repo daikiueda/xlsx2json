@@ -1,12 +1,12 @@
 var expect = require( "chai" ).expect,
     sinon = require( "sinon" ),
-    rewire = require( "rewire"),
+    rewire = require( "rewire" ),
 
     utilModulePath = "../../lib/private/utils.js",
-    utils =  require( utilModulePath );
+    utils = require( utilModulePath );
 
 describe( "private functions / utils", function(){
-    
+
     describe( "evalColumnPosition", function(){
         var evalColumnPosition = utils.evalColumnPosition;
 
@@ -27,7 +27,7 @@ describe( "private functions / utils", function(){
             expect( function(){ evalColumnPosition(); } ).to.throw( Error );
             expect( function(){ evalColumnPosition( "あ" ); } ).to.throw( Error );
         } );
-        
+
         it( "引数はone-basedの列位置なので、0が与えられた場合は、Errorを投げる。", function(){
             expect( function(){ evalColumnPosition( 0 ); } ).to.throw( Error );
         } );

@@ -64,4 +64,18 @@ describe( "private functions / utils", function(){
             expect( function(){ toOrdinalAlphabet( 0 ); } ).to.throw( Error );
         } );
     } );
+
+    describe( "formatRecordByColumnLabel( recode )", function(){
+        it( "recodeの内容を、Excel上のカラム表示（A,B ...）にあわせてオブジェクトに格納し返却する。", function(){
+            expect( utils.formatRecordByColumnLabel( [ "1", "a", "あ" ] ) )
+                .to.deep.equal( { A: "1", B: "a", C: "あ" } );
+        } );
+    } );
+
+    describe( "formatRecordByMapping( recode, mapping )", function(){
+        it( "recordの内容を、mappingで対応づけられたKey名にあわせてオブジェクトに格納し返却する。", function(){
+            expect( utils.formatRecordByMapping( [ "1", "a", "あ" ], { colB: "B", colC: "C" } ) )
+                .to.deep.equal( { colB: "a", colC: "あ" } );
+        } );
+    } );
 } );

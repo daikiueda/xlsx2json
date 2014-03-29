@@ -1,6 +1,4 @@
-var DEBUG = true,
-    expect = require( "chai" ).expect,
-    _ = require( "lodash" ),
+var expect = require( "chai" ).expect,
     xlsx2json = require( "../lib/xlsx2json.js" );
 
 describe( "xlsx2json", function(){

@@ -1,6 +1,6 @@
 var expect = require( "chai" ).expect,
     rewire = require( "rewire" ),
-    utilsModulePath = "../../lib/private/utils.js";
+    utilsModulePath = "../../lib/private/utils.js",
     utils = require( utilsModulePath );
 
 describe( "utils", function(){
@@ -93,7 +93,7 @@ describe( "utils", function(){
             } );
         } );
 
-        describe( "toAlphabet()", function(){
+        describe( ".toAlphabet()", function(){
             it( "Ordinal()の引数で与えられた値を、アルファベットに変換して返却する。", function(){
                 expect( utils.Ordinal( "A" ).toAlphabet() ).to.equal( "A" );
                 expect( utils.Ordinal( 1 ).toAlphabet() ).to.equal( "A" );

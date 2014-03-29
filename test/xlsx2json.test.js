@@ -75,6 +75,14 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                         }
                     );
                 } );
+
+                it( "指定された行は、返却されるデータから除外される。" );
+
+                it( "mappingとkeysRowが両方とも指定された場合は、mappingが優先される。" );
+            } );
+
+            describe( "dataStartingRow: {Number}", function(){
+                it( "指定された行が、内容を取得する最初の位置になる。" );
             } );
         } );
     } );

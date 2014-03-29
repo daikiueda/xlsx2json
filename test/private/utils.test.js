@@ -3,7 +3,7 @@ var expect = require( "chai" ).expect,
 
 describe( "private functions / utils", function(){
 
-    describe( "toOrdinalNumber", function(){
+    describe( "toOrdinalNumber( ordinalAlphabet )", function(){
         var toOrdinalNumber = utils.toOrdinalNumber;
 
         it( "引数がアルファベットの場合、数値に変換して返却する。（A=1, B=2 ... Z=26, AA=27）", function(){
@@ -30,7 +30,7 @@ describe( "private functions / utils", function(){
         } );
     } );
 
-    describe( "toOrdinalAlphabet", function(){
+    describe( "toOrdinalAlphabet( ordinalNumber )", function(){
         var toOrdinalAlphabet = utils.toOrdinalAlphabet;
 
         it( "引数が整数の場合、アルファベットに変換して返却する。（1=A, 2=B ... 26=Z, 27=AA）", function(){

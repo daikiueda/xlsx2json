@@ -1,10 +1,12 @@
 var expect = require( "chai" ).expect,
-    utils = require( "../../lib/private/utils.js" );
+    rewire = require( "rewire" ),
+    utilsModulePath = "../../lib/private/utils.js";
+    utils = require( utilsModulePath );
 
-describe( "private functions / utils", function(){
+describe( "utils", function(){
 
-    describe( "toOrdinalNumber( ordinalAlphabet )", function(){
-        var toOrdinalNumber = utils.toOrdinalNumber;
+    describe( "private / toOrdinalNumber( ordinalAlphabet )", function(){
+        var toOrdinalNumber = rewire( utilsModulePath ).__get__( "toOrdinalNumber" );
 
         it( "引数がアルファベットの場合、数値に変換して返却する。（A=1, B=2 ... Z=26, AA=27）", function(){
             expect( toOrdinalNumber( "A" ) ).to.equal( 1 );
@@ -30,8 +32,8 @@ describe( "private functions / utils", function(){
         } );
     } );
 
-    describe( "toOrdinalAlphabet( ordinalNumber )", function(){
-        var toOrdinalAlphabet = utils.toOrdinalAlphabet;
+    describe( "private / toOrdinalAlphabet( ordinalNumber )", function(){
+        var toOrdinalAlphabet = rewire( utilsModulePath ).__get__( "toOrdinalAlphabet" );
 
         it( "引数が整数の場合、アルファベットに変換して返却する。（1=A, 2=B ... 26=Z, 27=AA）", function(){
             expect( toOrdinalAlphabet( 1 ) ).to.equal( "A" );
@@ -56,12 +58,46 @@ describe( "private functions / utils", function(){
 
         it( "引数が整数またはアルファベットのみでない場合、Errorを投げる。", function(){
             expect( function(){ toOrdinalAlphabet( 1.5 ); } ).to.throw( Error );
-            expect( function(){ toOrdinalAlphabet( "あ" ); } ).to.throw( Error );
             expect( function(){ toOrdinalAlphabet( "A9" ); } ).to.throw( Error );
+            expect( function(){ toOrdinalAlphabet( "あ" ); } ).to.throw( Error );
         } );
 
         it( "引数で0が与えられた場合は、Errorを投げる。", function(){
             expect( function(){ toOrdinalAlphabet( 0 ); } ).to.throw( Error );
+        } );
+    } );
+
+    describe( "Ordinal( ordinalData )", function(){
+        describe( "[new] Ordinal( ordinalData )", function(){
+            it( "Ordinalオブジェクト（インスタンス）を返却する。", function(){
+                expect( new utils.Ordinal( 1 ) ).to.be.an.instanceof( utils.Ordinal );
+            } );
+
+            it( "newは省略可能である。（内部的に強制される）", function(){
+                expect( utils.Ordinal( 1 ) ).to.be.an.instanceof( utils.Ordinal );
+            } );
+
+            it( "引数がない、またはアルファベットか0より大きな整数でない場合、Errorを投げる。", function(){
+                expect( function(){ utils.Ordinal(); } ).to.throw( Error );
+                expect( function(){ utils.Ordinal( 0 ); } ).to.throw( Error );
+                expect( function(){ utils.Ordinal( 1.5 ); } ).to.throw( Error );
+                expect( function(){ utils.Ordinal( "A9" ); } ).to.throw( Error );
+                expect( function(){ utils.Ordinal( "あ" ); } ).to.throw( Error );
+            } );
+        } );
+
+        describe( ".toNumber()", function(){
+            it( "Ordinal()の引数で与えられた値を、数値に変換して返却する。", function(){
+                expect( utils.Ordinal( 10 ).toNumber() ).to.equal( 10 );
+                expect( utils.Ordinal( "A" ).toNumber() ).to.equal( 1 );
+            } );
+        } );
+
+        describe( "toAlphabet()", function(){
+            it( "Ordinal()の引数で与えられた値を、アルファベットに変換して返却する。", function(){
+                expect( utils.Ordinal( "A" ).toAlphabet() ).to.equal( "A" );
+                expect( utils.Ordinal( 1 ).toAlphabet() ).to.equal( "A" );
+            } );
         } );
     } );
 

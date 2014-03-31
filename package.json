@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha test/xlsx2json.test.js",
-    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec"
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --recursive -R spec"
   },
   "repository": {
     "type": "git",

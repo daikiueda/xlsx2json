@@ -1,3 +1,5 @@
+"use strict";
+
 var expect = require( "chai" ).expect,
     xlsx2json = require( "../lib/xlsx2json.js" );
 
@@ -123,9 +125,59 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                 } );
 
                 describe( "If both keysRow and mapping is specified.", function(){
-                    it( "keysRowで指定された行の各セルの値に、mappingで指定されたkeyを加えたものを、返却するオブジェクトのkey名にする。" );
-                    it( "keysRowとmappingで、key名が重複する場合は、mappingによるカラム位置指定を優先する。" );
-                    it( "mappingでカラム位置に「0」を指定されたkeyがある場合、該当するカラム位置の内容は、返却するオブジェクトから除外する。" );
+                    it( "keysRowで指定された行の各セルの値に、mappingで指定されたkeyを加えたものを、返却するオブジェクトのkey名にする。", function( done ){
+                        xlsx2json(
+                            "test/xlsx/with_keys_row.xlsx",
+                            {
+                                keysRow: 1,
+                                mapping: { mappedA: "A" }
+                            },
+                            function( error, jsonValueArray ){
+                                expect( jsonValueArray ).to.deep.equal( [
+                                    { "mappedA": "value 1-A", "columnA": "value 1-A", "column B": "value 1-B", "column-C": "value 1-C" },
+                                    { "mappedA": "value 2-A", "columnA": "value 2-A", "column B": "value 2-B", "column-C": "value 2-C" }
+                                ] );
+                                done();
+                            }
+                        );
+                    } );
+
+                    it( "keysRowとmappingで、key名が重複する場合は、mappingによるカラム位置指定を優先する。", function( done ){
+                        xlsx2json(
+                            "test/xlsx/with_keys_row.xlsx",
+                            {
+                                keysRow: 1,
+                                mapping: { "column B": "A" }
+                            },
+                            function( error, jsonValueArray ){
+                                expect( jsonValueArray ).to.deep.equal( [
+                                    { "columnA": "value 1-A", "column B": "value 1-A", "column-C": "value 1-C" },
+                                    { "columnA": "value 2-A", "column B": "value 2-A", "column-C": "value 2-C" }
+                                ] );
+                                done();
+                            }
+                        );
+                    } );
+
+                    it( "mappingでカラム位置に「0」を指定されたkeyがある場合、該当するカラム位置の内容は、返却するオブジェクトから除外する。", function( done ){
+                        xlsx2json(
+                            "test/xlsx/with_keys_row.xlsx",
+                            {
+                                keysRow: 1,
+                                mapping: {
+                                    "columnA": 0,
+                                    "column B": 0
+                                }
+                            },
+                            function( error, jsonValueArray ){
+                                expect( jsonValueArray ).to.deep.equal( [
+                                    { "column-C": "value 1-C" },
+                                    { "column-C": "value 2-C" }
+                                ] );
+                                done();
+                            }
+                        );
+                    } );
                 } );
             } );
 

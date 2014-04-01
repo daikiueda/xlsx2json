@@ -1,3 +1,5 @@
+"use strict";
+
 var expect = require( "chai" ).expect,
     rewire = require( "rewire" ),
     utilsModulePath = "../../lib/private/utils.js",
@@ -8,7 +10,7 @@ describe( "utils", function(){
     describe( "private / toOrdinalNumber( ordinalAlphabet )", function(){
         var toOrdinalNumber = rewire( utilsModulePath ).__get__( "toOrdinalNumber" );
 
-        it( "引数がアルファベットの場合、数値に変換して返却する。（A=1, B=2 ... Z=26, AA=27）", function(){
+        it( "引数がアルファベットの場合は、数値に変換して返却する。（A=1, B=2 ... Z=26, AA=27）", function(){
             expect( toOrdinalNumber( "A" ) ).to.equal( 1 );
             expect( toOrdinalNumber( "a" ) ).to.equal( 1 );
             expect( toOrdinalNumber( "Z" ) ).to.equal( 26 );
@@ -16,18 +18,18 @@ describe( "utils", function(){
             expect( toOrdinalNumber( "BA" ) ).to.equal( 53 );
         } );
 
-        it( "引数が整数の場合、その数値を返却する。", function(){
+        it( "引数が整数の場合は、その数値を返却する。", function(){
             expect( toOrdinalNumber( 5 ) ).to.equal( 5 );
             expect( toOrdinalNumber( "5" ) ).to.equal( 5 );
         } );
 
-        it( "引数がない、またはアルファベットか整数でない場合、Errorを投げる。", function(){
+        it( "引数がない、またはアルファベットか整数でない場合は、Errorを投げる。", function(){
             expect( function(){ toOrdinalNumber(); } ).to.throw( Error );
             expect( function(){ toOrdinalNumber( 1.5 ); } ).to.throw( Error );
             expect( function(){ toOrdinalNumber( "あ" ); } ).to.throw( Error );
         } );
 
-        it( "引数で0が与えられた場合は、Errorを投げる。", function(){
+        it( "引数が0の場合は、Errorを投げる。", function(){
             expect( function(){ toOrdinalNumber( 0 ); } ).to.throw( Error );
         } );
     } );
@@ -35,7 +37,7 @@ describe( "utils", function(){
     describe( "private / toOrdinalAlphabet( ordinalNumber )", function(){
         var toOrdinalAlphabet = rewire( utilsModulePath ).__get__( "toOrdinalAlphabet" );
 
-        it( "引数が整数の場合、アルファベットに変換して返却する。（1=A, 2=B ... 26=Z, 27=AA）", function(){
+        it( "引数が整数の場合は、アルファベットに変換して返却する。（1=A, 2=B ... 26=Z, 27=AA）", function(){
             expect( toOrdinalAlphabet( 1 ) ).to.equal( "A" );
             expect( toOrdinalAlphabet( "1" ) ).to.equal( "A" );
             expect( toOrdinalAlphabet( 26 ) ).to.equal( "Z" );
@@ -43,7 +45,7 @@ describe( "utils", function(){
             expect( toOrdinalAlphabet( 53 ) ).to.equal( "BA" );
         } );
 
-        it( "引数がアルファベットの場合、その文字列を返却する。", function(){
+        it( "引数がアルファベットの場合は、その文字列を返却する。", function(){
             expect( toOrdinalAlphabet( "AA" ) ).to.equal( "AA" );
         } );
 
@@ -51,18 +53,18 @@ describe( "utils", function(){
             expect( toOrdinalAlphabet( "Aa" ) ).to.equal( "AA" );
         } );
 
-        it( "引数がない場合、Errorを投げる。", function(){
+        it( "引数がない場合は、Errorを投げる。", function(){
             expect( function(){ toOrdinalAlphabet(); } ).to.throw( Error );
             expect( function(){ toOrdinalAlphabet( "あ" ); } ).to.throw( Error );
         } );
 
-        it( "引数が整数またはアルファベットのみでない場合、Errorを投げる。", function(){
+        it( "引数が整数またはアルファベットのみでない場合は、Errorを投げる。", function(){
             expect( function(){ toOrdinalAlphabet( 1.5 ); } ).to.throw( Error );
             expect( function(){ toOrdinalAlphabet( "A9" ); } ).to.throw( Error );
             expect( function(){ toOrdinalAlphabet( "あ" ); } ).to.throw( Error );
         } );
 
-        it( "引数で0が与えられた場合は、Errorを投げる。", function(){
+        it( "引数が0の場合は、Errorを投げる。", function(){
             expect( function(){ toOrdinalAlphabet( 0 ); } ).to.throw( Error );
         } );
     } );
@@ -77,7 +79,7 @@ describe( "utils", function(){
                 expect( utils.Ordinal( 1 ) ).to.be.an.instanceof( utils.Ordinal );
             } );
 
-            it( "引数がない、またはアルファベットか0より大きな整数でない場合、Errorを投げる。", function(){
+            it( "引数がない、またはアルファベットか0より大きな整数でない場合は、Errorを投げる。", function(){
                 expect( function(){ utils.Ordinal(); } ).to.throw( Error );
                 expect( function(){ utils.Ordinal( 0 ); } ).to.throw( Error );
                 expect( function(){ utils.Ordinal( 1.5 ); } ).to.throw( Error );

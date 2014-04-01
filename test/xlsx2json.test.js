@@ -16,33 +16,43 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
             } );
         } );
 
-        it( "xlsx2json( xlsxFilePath, options )" /*, function( done ){
-         xlsx2json( "test/xlsx/data_only.xlsx", {} ).done( function( jsonValueArray ){
-         expect( jsonValueArray ).to.be.an( "array" );
-         done();
-         } );
-         }*/ );
+        it( "xlsx2json( xlsxFilePath, options )", function( done ){
+            xlsx2json( "test/xlsx/with_keys_row.xlsx", { keysRow: 1 } ).done( function( jsonValueArray ){
+                expect( jsonValueArray ).to.deep.equal( [
+                    { "columnA": "value 1-A", "column B": "value 1-B", "column-C": "value 1-C" },
+                    { "columnA": "value 2-A", "column B": "value 2-B", "column-C": "value 2-C" }
+                ] );
+                done();
+            } );
+        } );
 
-        it( "xlsx2json( xlsxFilePath, callback )" /*, function( done ){
-         xlsx2json( "test/xlsx/data_only.xlsx", function( error, jsonValueArray ){
-         expect( jsonValueArray ).to.be.an( "array" );
-         done();
-         } );
-         }*/ );
+        it( "xlsx2json( xlsxFilePath, callback )", function( done ){
+            xlsx2json( "test/xlsx/data_only.xlsx", function( error, jsonValueArray ){
+                expect( jsonValueArray ).to.be.an( "array" );
+                done();
+            } );
+        } );
 
-        it( "xlsx2json( xlsxFilePath, options, callback )" /*, function( done ){
-         xlsx2json( "test/xlsx/data_only.xlsx", {}, function( error, jsonValueArray ){
-         expect( jsonValueArray ).to.be.an( "array" );
-         done();
-         } );
-         }*/ );
+        it( "xlsx2json( xlsxFilePath, options, callback )", function( done ){
+            xlsx2json( "test/xlsx/with_keys_row.xlsx", { keysRow: 1 }, function( error, jsonValueArray ){
+                expect( jsonValueArray[ 1 ] ).to.have.property( "column-C" ).and.equal( "value 2-C" );
+                done();
+            } );
+        } );
 
         it( "* Throw error, when invalid argument types are passed.", function(){
             expect( function(){ xlsx2json(); } ).to.throw( Error );
         } );
 
         describe( "xlsxFilePath", function(){
-            it( "ファイル指定" );
+            it( "指定されたパスに正常な.xlsxファイルが存在する場合は、該当ファイルの読み込み処理を開始する。", function( done ){
+                xlsx2json( "test/xlsx/data_only.xlsx" ).done( function( jsonValueArray ){
+                    expect( jsonValueArray ).to.be.an( "array" );
+                    done();
+                } );
+            } );
+
+            it( "エラーの場合。" );
         } );
 
         describe( "options", function(){
@@ -195,24 +205,58 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                             ] );
                             done();
                         }
-                    )
+                    );
                 } );
             } );
         } );
 
         describe( "callback", function(){
-            it( "function( error, jsonValueArray ){ ... }" );
+            describe( "function( error, jsonValueArray ){ ... }", function(){
+                it( "success", function( done ){
+                    xlsx2json( "test/xlsx/data_only.xlsx", function( error, jsonValueArray ){
+                        expect( jsonValueArray ).to.be.an( "array" );
+                        done();
+                    } );
+                } );
+
+                it( "success", function( done ){
+                    xlsx2json( "test/xlsx/data_only.xlsx", function( error, jsonValueArray ){
+                        expect( jsonValueArray ).to.be.an( "array" );
+                        done();
+                    } );
+                } );
+            } );
         } );
     } );
 
     describe( "Returns", function(){
         describe( "promise (*Q promise - http://documentup.com/kriskowal/q/)", function(){
-            it( ".done( function( jsonValueArray ){ ... } )" );
+            it( ".done( function( jsonValueArray ){ ... } )", function( done ){
+                xlsx2json( "test/xlsx/data_only.xlsx" ).done( function( jsonValueArray ){
+                    expect( jsonValueArray ).to.be.an( "array" );
+                    done();
+                } );
+            } );
             it( ".fail( function( error ){ ... } )" );
         } );
     } );
 
     describe( "* extra", function(){
-        it( "日本語文字が含まれるExcelデータも、問題なく処理する。" );
+        it( "日本語文字が含まれるExcelデータも、問題なく処理する。", function( done ){
+            xlsx2json(
+                "test/xlsx/japanese_characters.xlsx",
+                {
+                    keysRow: 3,
+                    dataStartingRow: 4
+                },
+                function( error, jsonValueArray ){
+                    expect( jsonValueArray ).to.deep.equal( [
+                        { "カラムA": "1-Aの値", "カラム B": "1-Bの値", "カラム-C": "1-Cの値" },
+                        { "カラムA": "2-Aの値", "カラム B": "2-Bの値", "カラム-C": "2-Cの値" }
+                    ] );
+                    done();
+                }
+            )
+        } );
     } );
 } );

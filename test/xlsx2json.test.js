@@ -35,7 +35,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
          } );
          }*/ );
 
-        it( "* If ary argument is invalid, an error will be thrown.", function(){
+        it( "* Throw error, when invalid argument types are passed.", function(){
             expect( function(){ xlsx2json(); } ).to.throw( Error );
         } );
 
@@ -45,7 +45,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
 
         describe( "options", function(){
             describe( "keysRow: {Number} (*one-based row position)", function(){
-                it( "指定された行の値が、得られるオブジェクトのkey名になる。", function( done ){
+                it( "指定された行の各セルの値を、返却するオブジェクトの各key名にする。", function( done ){
                     xlsx2json(
                         "test/xlsx/with_keys_row.xlsx",
                         { keysRow: 1 },
@@ -60,7 +60,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                     );
                 } );
 
-                it( "指定された行に空のセルがある場合、該当するカラムの内容は得られるオブジェクトから除外される。", function( done ){
+                it( "指定された行に空のセルがある場合、該当するカラムの内容は、返却するオブジェクトに含めない。", function( done ){
                     xlsx2json(
                         "test/xlsx/with_keys_row_include_empty_cell.xlsx",
                         { keysRow: 1 },
@@ -74,7 +74,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                     );
                 } );
 
-                it( "指定された行は、返却されるデータから除外される。", function( done ){
+                it( "指定された行は、返却される配列から除外される。", function( done ){
                     xlsx2json(
                         "test/xlsx/with_keys_row.xlsx",
                         { keysRow: 1 },
@@ -87,7 +87,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
             } );
 
             describe( "mapping: {Object}", function(){
-                it( "マッピングで示されたkeyに、該当するカラム位置の内容が格納される。", function( done ){
+                it( "マッピングで示されたkeyに、該当するカラム位置の内容を格納する。", function( done ){
                     xlsx2json(
                         "test/xlsx/data_only.xlsx",
                         { mapping: {
@@ -105,41 +105,36 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                     );
                 } );
 
+                it( "マッピングで指定されないカラムは、返却するオブジェクトに含めない。", function( done ){
+                    xlsx2json(
+                        "test/xlsx/data_only.xlsx",
+                        { mapping: {
+                            columnA: "A",
+                            columnC: "3"
+                        } },
+                        function( error, jsonValueArray ){
+                            expect( jsonValueArray ).to.deep.equal( [
+                                { "columnA": "value of A1", "columnC": "value of C1" },
+                                { "columnA": "value of A2", "columnC": "value of C2" }
+                            ] );
+                            done();
+                        }
+                    );
+                } );
+
                 describe( "If both keysRow and mapping is specified.", function(){
-                    it( "keysRowをベースにmappingで拡張。" );
-                    it( "同名のkeyがある場合は、mappingで上書き" );
-                    it( "mappingで０を指定されたkeyは除外される。" );
-//                    it( "", function( done ){
-//                        xlsx2json(
-//                            "test/xlsx/with_keys_row.xlsx",
-//                            {
-//                                keysRow: 1,
-//                                mapping: {
-//                                    columnA: "A",
-//                                    columnB: 2,
-//                                    columnC: "3"
-//                                }
-//                            },
-//                            function( error, jsonValueArray ){
-//                                console.log(jsonValueArray);
-//                            expect( jsonValueArray ).to.deep.equal( [
-//                                { "columnA": "columnA", "columnB": "column B", "columnC": "column-C" },
-//                                { "columnA": "value of A1", "columnB": "value of B1", "columnC": "value of C1" },
-//                                { "columnA": "value of A2", "columnB": "value of B2", "columnC": "value of C2" }
-//                            ] );
-//                                done();
-//                            }
-//                        );
-//                    } );
+                    it( "keysRowで指定された行の各セルの値に、mappingで指定されたkeyを加えたものを、返却するオブジェクトのkey名にする。" );
+                    it( "keysRowとmappingで、key名が重複する場合は、mappingによるカラム位置指定を優先する。" );
+                    it( "mappingでカラム位置に「0」を指定されたkeyがある場合、該当するカラム位置の内容は、返却するオブジェクトから除外する。" );
                 } );
             } );
 
             describe( "dataStartingRow: {Number} (*one-based row position)", function(){
-                it( "指定された行が、内容を取得する最初の位置になる。", function( done ){
+                it( "指定された行を、内容を取得する最初の位置にする。", function( done ){
                     xlsx2json(
                         "test/xlsx/with_header_information.xlsx",
                         {
-                            dataStartingRow: 4
+                            dataStartingRow: 3
                         },
                         function( error, jsonValueArray ){
                             expect( jsonValueArray ).to.deep.equal( [
@@ -163,5 +158,9 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
             it( ".done( function( jsonValueArray ){ ... } )" );
             it( ".fail( function( error ){ ... } )" );
         } );
+    } );
+
+    describe( "* extra", function(){
+        it( "日本語文字が含まれるExcelデータも、問題なく処理する。" );
     } );
 } );

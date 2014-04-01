@@ -12,7 +12,8 @@
     "mocha": "^1.18.2",
     "chai": "^1.9.1",
     "rewire": "^2.0.0",
-    "istanbul": "^0.2.7"
+    "istanbul": "^0.2.7",
+    "coveralls": "^2.10.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha test/xlsx2json.test.js",

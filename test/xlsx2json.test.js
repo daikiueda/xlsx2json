@@ -3,10 +3,10 @@
 var expect = require( "chai" ).expect,
     xlsx2json = require( "../lib/xlsx2json.js" );
 
-describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
+describe( "xlsx2json( pathToXlsx, [options], [callback] )", function(){
 
     describe( "Arguments", function(){
-        it( "xlsx2json( xlsxFilePath )", function( done ){
+        it( "xlsx2json( pathToXlsx )", function( done ){
             xlsx2json( "test/xlsx/data_only.xlsx" ).done( function( jsonValueArray ){
                 expect( jsonValueArray ).to.deep.equal( [
                     { A: "value of A1", B: "value of B1", C: "value of C1" },
@@ -16,7 +16,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
             } );
         } );
 
-        it( "xlsx2json( xlsxFilePath, options )", function( done ){
+        it( "xlsx2json( pathToXlsx, options )", function( done ){
             xlsx2json( "test/xlsx/with_keys_row.xlsx", { keysRow: 1 } ).done( function( jsonValueArray ){
                 expect( jsonValueArray ).to.deep.equal( [
                     { "columnA": "value 1-A", "column B": "value 1-B", "column-C": "value 1-C" },
@@ -26,14 +26,14 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
             } );
         } );
 
-        it( "xlsx2json( xlsxFilePath, callback )", function( done ){
+        it( "xlsx2json( pathToXlsx, callback )", function( done ){
             xlsx2json( "test/xlsx/data_only.xlsx", function( error, jsonValueArray ){
                 expect( jsonValueArray ).to.be.an( "array" );
                 done();
             } );
         } );
 
-        it( "xlsx2json( xlsxFilePath, options, callback )", function( done ){
+        it( "xlsx2json( pathToXlsx, options, callback )", function( done ){
             xlsx2json( "test/xlsx/with_keys_row.xlsx", { keysRow: 1 }, function( error, jsonValueArray ){
                 expect( jsonValueArray[ 1 ] ).to.have.property( "column-C" ).and.equal( "value 2-C" );
                 done();
@@ -50,7 +50,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
             } ).to.not.throw( Error );
         } );
 
-        describe( "xlsxFilePath", function(){
+        describe( "pathToXlsx", function(){
             it( "指定されたパスに正常な.xlsxファイルが存在する場合は、該当ファイルの読み込み処理を開始する。", function( done ){
                 xlsx2json( "test/xlsx/data_only.xlsx" ).done( function( jsonValueArray ){
                     expect( jsonValueArray ).to.be.an( "array" );

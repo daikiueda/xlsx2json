@@ -240,7 +240,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                 } );
 
                 it( "error", function( done ){
-                    xlsx2json( "test/xlsx/invalid_fail_type.txt", function( error ){
+                    xlsx2json( "test/xlsx/invalid_file_type.txt", function( error ){
                         expect( error ).to.be.an.instanceof( Error );
                         done();
                     } );
@@ -258,7 +258,7 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                 } );
             } );
             it( ".fail( function( error ){ ... } )", function( done ){
-                xlsx2json( "test/xlsx/invalid_fail_type.txt" ).fail( function( error ){
+                xlsx2json( "test/xlsx/invalid_file_type.txt" ).fail( function( error ){
                     expect( error ).to.be.an.instanceof( Error );
                     done();
                 } );

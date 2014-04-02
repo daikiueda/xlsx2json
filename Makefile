@@ -6,7 +6,7 @@ test-cov: clean
 	node $(istanbul) cover $(mocha) --report lcovonly -- --recursive -R spec
 
 coveralls: 
-	cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js --verbose
+	cat ./coverage/lcov.info | $(coveralls) --verbose
 
 clean:
 	rm -fr coverage

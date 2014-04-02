@@ -44,6 +44,12 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
             expect( function(){ xlsx2json(); } ).to.throw( Error );
         } );
 
+        it( "* 引数を4つ以上わたされても、問題はない。", function(){
+            expect( function(){
+                xlsx2json( "test/xlsx/data_only.xlsx", {}, function(){}, "dummy argument" );
+            } ).to.not.throw( Error );
+        } );
+
         describe( "xlsxFilePath", function(){
             it( "指定されたパスに正常な.xlsxファイルが存在する場合は、該当ファイルの読み込み処理を開始する。", function( done ){
                 xlsx2json( "test/xlsx/data_only.xlsx" ).done( function( jsonValueArray ){
@@ -52,7 +58,21 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                 } );
             } );
 
-            it( "エラーの場合。" );
+            describe( "* if a file processing error occurred, callback function is called and promise is rejected.", function(){
+                it( "コールバック関数が呼び出される。その際、引数でErrorオブジェクトが渡される。", function( done ){
+                    xlsx2json( "test/xlsx/__file_not_found__", function( error ){
+                        expect( error ).to.be.an.instanceof( Error );
+                        done();
+                    } );
+                } );
+
+                it( "関数実行時に返却されたQ.Promiseがリジェクトされる。その際、引数でErrorオブジェクトが渡される。", function( done ){
+                    xlsx2json( "test/xlsx/__file_not_found__" ).fail( function( error ){
+                        expect( error ).to.be.an.instanceof( Error );
+                        done();
+                    } );
+                } );
+            } );
         } );
 
         describe( "options", function(){
@@ -219,9 +239,9 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                     } );
                 } );
 
-                it( "success", function( done ){
-                    xlsx2json( "test/xlsx/data_only.xlsx", function( error, jsonValueArray ){
-                        expect( jsonValueArray ).to.be.an( "array" );
+                it( "error", function( done ){
+                    xlsx2json( "test/xlsx/invalid_fail_type.txt", function( error ){
+                        expect( error ).to.be.an.instanceof( Error );
                         done();
                     } );
                 } );
@@ -237,7 +257,12 @@ describe( "xlsx2json( xlsxFilePath, [options], [callback] )", function(){
                     done();
                 } );
             } );
-            it( ".fail( function( error ){ ... } )" );
+            it( ".fail( function( error ){ ... } )", function( done ){
+                xlsx2json( "test/xlsx/invalid_fail_type.txt" ).fail( function( error ){
+                    expect( error ).to.be.an.instanceof( Error );
+                    done();
+                } );
+            } );
         } );
     } );
 

@@ -1,0 +1,1 @@
+This is dummy file for invalid file type testing.

@@ -1,7 +1,15 @@
-xlsx2json [![Build Status](https://travis-ci.org/daikiueda/xlsx2json.svg?branch=master)](https://travis-ci.org/daikiueda/xlsx2json) [![Coverage Status](https://coveralls.io/repos/daikiueda/xlsx2json/badge.png?branch=master)](https://coveralls.io/r/daikiueda/xlsx2json?branch=master)
+xlsx2json [![Build Status](https://travis-ci.org/daikiueda/xlsx2json.svg?branch=master)](https://travis-ci.org/daikiueda/xlsx2json) [![Coverage Status](https://coveralls.io/repos/daikiueda/xlsx2json/badge.png?branch=master)](https://coveralls.io/r/daikiueda/xlsx2json?branch=master) [![Code Climate](https://codeclimate.com/github/daikiueda/xlsx2json.png)](https://codeclimate.com/github/daikiueda/xlsx2json)
 =========
 
+[![NPM](https://nodei.co/npm/xlsx2json.png?compact=true)](https://nodei.co/npm/xlsx2json/)
+
 Convert xlsx to JSON.
+
+## Install
+
+```Bash
+$ npm install xlsx2json
+```
 
 ## Usage
 

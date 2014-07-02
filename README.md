@@ -16,7 +16,7 @@ $ npm install xlsx2json
 Simple usage : )
 
 ```JavaScript
-var xlsx2json = required( "xlsx2json" );
+var xlsx2json = require( "xlsx2json" );
 xlsx2json( "path_to_xlsx_file", function( error, jsonArray ){
     ...
 } );
@@ -44,7 +44,7 @@ for example : )
 convert [test/xlsx/with_header_information_and_keys_row.xlsx](https://github.com/daikiueda/xlsx2json/blob/master/test/xlsx/with_header_information_and_keys_row.xlsx) to jsonArray.
 
 ```JavaScript
-var xlsx2json = required( "xlsx2json" );
+var xlsx2json = require( "xlsx2json" );
 xlsx2json(
     "test/xlsx/with_header_information_and_keys_row.xlsx",
     {

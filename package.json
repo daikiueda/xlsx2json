@@ -4,7 +4,7 @@
   "description": "Convert xlsx to JSON.",
   "main": "lib/xlsx2json.js",
   "dependencies": {
-    "lodash": "~3.0.0",
+    "lodash": "~2.4.1",
     "q": "^1.1.2",
     "excel": "~0.1.1"
   },

@@ -7,7 +7,7 @@ const assert = require('power-assert'),
     utilsModulePath = '../../lib/private/Utils.js',
     utils = require(utilsModulePath);
 
-describe('utils', () => {
+describe('Utils', () => {
 
     describe('private toOrdinalNumber(ordinalAlphabet)', () => {
         const toOrdinalNumber = rewire(utilsModulePath).__get__('toOrdinalNumber');

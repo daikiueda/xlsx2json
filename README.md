@@ -16,51 +16,65 @@ $ npm install xlsx2json
 Simple usage : )
 
 ```JavaScript
-var xlsx2json = require( "xlsx2json" );
-xlsx2json( "path_to_xlsx_file", function( error, jsonArray ){
+var xlsx2json = require('xlsx2json');
+xlsx2json('path_to_xlsx_file').then(jsonArray => {
     ...
-} );
+});
 ```
 
-### xlsx2json( pathToXlsx, [options], [callback] )
+### xlsx2json(pathToXlsx, [options], [callback])
 
 #### Arguments
 
 * __pathToXlsx__ String  
 
 * __options__ Object _(optional)_
-  * ```keysRow``` Number (*one-based row position)
-  * ```mapping``` Object
-  * ```dataStartingRow``` Number (*one-based row position)
+  * ```sheet```
+    * {Number} (*zero-based sheet index)
+    * {String}
+    * {Array}
+    
+    If options.sheet is not set, all sheets will be passed as Array.
+  * ```keysRow``` {Number} (*one-based row position)
+  * ```mapping``` {Object}
+  * ```dataStartingRow``` {Number} (*one-based row position)
 
 * __callback__ Function _(optional)_  
-  * function( error, jsonArray ){}
+  * function(error, jsonArray) {}
 
 #### Returns
 
-* __promise__ ( Q promise - http://documentup.com/kriskowal/q/ )
+* __Promise__ 
 
 for example : )  
 convert [test/xlsx/with_header_information_and_keys_row.xlsx](https://github.com/daikiueda/xlsx2json/blob/master/test/xlsx/with_header_information_and_keys_row.xlsx) to jsonArray.
 
 ```JavaScript
-var xlsx2json = require( "xlsx2json" );
+var xlsx2json = require('xlsx2json');
 xlsx2json(
-    "test/xlsx/with_header_information_and_keys_row.xlsx",
+    'test/xlsx/with_header_information_and_keys_row.xlsx',
     {
         dataStartingRow: 4,
         mapping: {
-            "col_1": "A",
-            "col_2": "B",
-            "col_3": "C"
+            'col_1': 'A',
+            'col_2': 'B',
+            'col_3': 'C'
         }
     }
-} ).done( function( jsonArray ){ ... } );
+}).then(jsonArray => { ... });
 ```
 The jsonArray is as follows : )
 ```JSON
 [
-    { "col_1": "value 1-A", "col_1": "value 1-B", "col_3": "value 1-C" },
-    { "col_1": "value 2-A", "col_2": "value 2-B", "col_3": "value 2-C" }
+    [
+        {"col_1": "value 1-A", "col_1": "value 1-B", "col_3": "value 1-C"},
+        {"col_1": "value 2-A", "col_2": "value 2-B", "col_3": "value 2-C"}
+    ]
 ]
 ```
+
+The result is the structure of a three-dimensional array.  
+In short, ```jsonArray[sheets][rows][cellValues]```
+
+
+Alternatively, if the option.sheet is set (as a String or a Number), only specific sheet will be passed.

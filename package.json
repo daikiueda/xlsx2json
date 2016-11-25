@@ -3,6 +3,9 @@
   "version": "0.0.8",
   "description": "Convert xlsx to JSON.",
   "main": "lib/xlsx2json.js",
+  "engines": {
+    "node" : ">=6.9.1"
+  },
   "dependencies": {
     "csv-parse": "^1.1.7",
     "lodash": "^4.17.2",

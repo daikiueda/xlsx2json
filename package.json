@@ -8,8 +8,7 @@
   },
   "dependencies": {
     "csv-parse": "^1.1.7",
-    "lodash": "^4.17.2",
-    "q": "^1.2.0",
+    "memoizee": "^0.4.1",
     "xlsx": "^0.8.0"
   },
   "devDependencies": {

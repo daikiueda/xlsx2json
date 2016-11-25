@@ -9,7 +9,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
 
     describe('Arguments', () => {
         it('xlsx2json(pathToXlsx)', done => {
-            xlsx2json('test/xlsx/data_only.xlsx').done(jsonValueArray => {
+            xlsx2json('test/xlsx/data_only.xlsx').then(jsonValueArray => {
                 assert.deepEqual(
                     jsonValueArray,
                     [
@@ -22,7 +22,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
         });
 
         it('xlsx2json(pathToXlsx, options)', done => {
-            xlsx2json('test/xlsx/with_keys_row.xlsx', {keysRow: 1}).done(jsonValueArray => {
+            xlsx2json('test/xlsx/with_keys_row.xlsx', {keysRow: 1}).then(jsonValueArray => {
                 assert.deepEqual(
                     jsonValueArray,
                     [
@@ -48,32 +48,39 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
             });
         });
 
-        it('* Throw error, when invalid argument types are passed.', () => {
-            assert.throws(() => xlsx2json());
+        it('* Reject and pass error, when invalid argument types are passed.', done => {
+            xlsx2json().catch(error => {
+                assert(error instanceof Error);
+                done();
+            });
         });
 
-        it('* 引数を4つ以上わたされても、問題はない。', () => {
-            assert.doesNotThrow(() => xlsx2json('test/xlsx/data_only.xlsx', {}, () => {}, 'dummy argument'));
+        it('* 引数を4つ以上わたされても、問題はない', done => {
+            xlsx2json('test/xlsx/data_only.xlsx', {}, () => {}, 'dummy argument')
+                .then(jsonValueArray => {
+                    assert(jsonValueArray[0]['A'] === 'value of A1');
+                    done();
+                });
         });
 
         describe('pathToXlsx', () => {
-            it('指定されたパスに正常な.xlsxファイルが存在する場合は、該当ファイルの読み込み処理を開始する。', done => {
-                xlsx2json('test/xlsx/data_only.xlsx').done(jsonValueArray => {
+            it('指定されたパスに正常な.xlsxファイルが存在する場合は、該当ファイルの読み込み処理を開始する', done => {
+                xlsx2json('test/xlsx/data_only.xlsx').then(jsonValueArray => {
                     assert(jsonValueArray instanceof Array);
                     done();
                 });
             });
 
             describe('* if a file processing error occurred, callback function is called and promise is rejected.', () => {
-                it('コールバック関数が呼び出される。その際、引数でErrorオブジェクトが渡される。', done => {
+                it('コールバック関数が呼び出される。その際、引数でErrorオブジェクトが渡される', done => {
                     xlsx2json('test/xlsx/__file_not_found__', error => {
                         assert(error instanceof Error);
                         done();
-                    });
+                    }).catch(error => void(error));
                 });
 
-                it('関数実行時に返却されたQ.Promiseがリジェクトされる。その際、引数でErrorオブジェクトが渡される。', done => {
-                    xlsx2json('test/xlsx/__file_not_found__').fail(error => {
+                it('関数実行時に返却されたPromiseがリジェクトされる。その際、引数でErrorオブジェクトが渡される', done => {
+                    xlsx2json('test/xlsx/__file_not_found__').catch(error => {
                         assert(error instanceof Error);
                         done();
                     });
@@ -83,7 +90,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
 
         describe('options', () => {
             describe('keysRow: {Number} (*one-based row position)', () => {
-                it('指定された行の各セルの値を、返却するオブジェクトの各key名にする。', done => {
+                it('指定された行の各セルの値を、返却するオブジェクトの各key名にする', done => {
                     xlsx2json(
                         'test/xlsx/with_keys_row.xlsx',
                         {keysRow: 1},
@@ -100,7 +107,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
                     );
                 });
 
-                it('指定された行に空のセルがある場合、該当するカラムの内容は、返却するオブジェクトに含めない。', done => {
+                it('指定された行に空のセルがある場合、該当するカラムの内容は、返却するオブジェクトに含めない', done => {
                     xlsx2json(
                         'test/xlsx/with_keys_row_include_empty_cell.xlsx',
                         {keysRow: 1},
@@ -117,7 +124,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
                     );
                 });
 
-                it('指定された行は、返却される配列から除外される。', done => {
+                it('指定された行は、返却される配列から除外される', done => {
                     xlsx2json(
                         'test/xlsx/with_keys_row.xlsx',
                         {keysRow: 1},
@@ -130,7 +137,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
             });
 
             describe('mapping: {Object}', () => {
-                it('マッピングで示されたkeyに、該当するカラム位置の内容を格納する。', done => {
+                it('マッピングで示されたkeyに、該当するカラム位置の内容を格納する', done => {
                     xlsx2json(
                         'test/xlsx/data_only.xlsx',
                         {
@@ -153,7 +160,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
                     );
                 });
 
-                it('マッピングで指定されないカラムは、返却するオブジェクトに含めない。', done => {
+                it('マッピングで指定されないカラムは、返却するオブジェクトに含めない', done => {
                     xlsx2json(
                         'test/xlsx/data_only.xlsx',
                         {
@@ -176,7 +183,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
                 });
 
                 describe('If both keysRow and mapping is specified.', () => {
-                    it('keysRowで指定された行の各セルの値に、mappingで指定されたkeyを加えたものを、返却するオブジェクトのkey名にする。', done => {
+                    it('keysRowで指定された行の各セルの値に、mappingで指定されたkeyを加えたものを、返却するオブジェクトのkey名にする', done => {
                         xlsx2json(
                             'test/xlsx/with_keys_row.xlsx',
                             {
@@ -206,7 +213,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
                         );
                     });
 
-                    it('keysRowとmappingで、key名が重複する場合は、mappingによるカラム位置指定を優先する。', done => {
+                    it('keysRowとmappingで、key名が重複する場合は、mappingによるカラム位置指定を優先する', done => {
                         xlsx2json(
                             'test/xlsx/with_keys_row.xlsx',
                             {
@@ -226,7 +233,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
                         );
                     });
 
-                    it('mappingでカラム位置に「0」を指定されたkeyがある場合、該当するカラム位置の内容は、返却するオブジェクトから除外する。', done => {
+                    it('mappingでカラム位置に「0」を指定されたkeyがある場合、該当するカラム位置の内容は、返却するオブジェクトから除外する', done => {
                         xlsx2json(
                             'test/xlsx/with_keys_row.xlsx',
                             {
@@ -252,7 +259,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
             });
 
             describe('dataStartingRow: {Number} (*one-based row position)', () => {
-                it('指定された行を、内容を取得する最初の位置にする。', done => {
+                it('指定された行を、内容を取得する最初の位置にする', done => {
                     xlsx2json(
                         'test/xlsx/with_header_information.xlsx',
                         {
@@ -286,7 +293,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
                     xlsx2json('test/xlsx/invalid_file_type.txt', function(error) {
                         assert(error instanceof Error);
                         done();
-                    });
+                    }).catch(error => void error);
                 });
             });
         });
@@ -294,14 +301,14 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
 
     describe('Returns', () => {
         describe('promise (*Q promise - http://documentup.com/kriskowal/q/)', () => {
-            it('.done( function( jsonValueArray ){ ... } )', done => {
-                xlsx2json('test/xlsx/data_only.xlsx').done(jsonValueArray => {
+            it('.then(jsonValueArray => { ... })', done => {
+                xlsx2json('test/xlsx/data_only.xlsx').then(jsonValueArray => {
                     assert(jsonValueArray instanceof Array);
                     done();
                 });
             });
-            it('.fail( function( error ){ ... } )', done => {
-                xlsx2json('test/xlsx/invalid_file_type.txt').fail(function(error) {
+            it('.catch(error => { ... })', done => {
+                xlsx2json('test/xlsx/invalid_file_type.txt').catch(function(error) {
                     assert(error instanceof Error);
                     done();
                 });
@@ -310,7 +317,7 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
     });
 
     describe('* extra', () => {
-        it('日本語文字が含まれるExcelデータも、問題なく処理する。', done => {
+        it('日本語文字が含まれるExcelデータも、問題なく処理する', done => {
             xlsx2json(
                 'test/xlsx/japanese_characters.xlsx',
                 {

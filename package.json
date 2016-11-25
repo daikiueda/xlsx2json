@@ -1,6 +1,6 @@
 {
   "name": "xlsx2json",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "description": "Convert xlsx to JSON.",
   "main": "lib/xlsx2json.js",
   "engines": {

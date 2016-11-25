@@ -1,119 +1,125 @@
+/* global describe, it */
+
 'use strict';
 
-var expect = require('chai').expect,
+const assert = require('power-assert'),
     rewire = require('rewire'),
     utilsModulePath = '../../lib/private/utils.js',
     utils = require(utilsModulePath);
 
-describe('utils', function() {
+describe('utils', () => {
 
-    describe('private toOrdinalNumber(ordinalAlphabet)', function() {
-        var toOrdinalNumber = rewire(utilsModulePath).__get__('toOrdinalNumber');
+    describe('private toOrdinalNumber(ordinalAlphabet)', () => {
+        const toOrdinalNumber = rewire(utilsModulePath).__get__('toOrdinalNumber');
 
-        it('引数がアルファベットの場合は、数値に変換して返却する。（A=1, B=2 ... Z=26, AA=27）', function() {
-            expect(toOrdinalNumber('A')).to.equal(1);
-            expect(toOrdinalNumber('a')).to.equal(1);
-            expect(toOrdinalNumber('Z')).to.equal(26);
-            expect(toOrdinalNumber('AA')).to.equal(27);
-            expect(toOrdinalNumber('BA')).to.equal(53);
+        it('引数がアルファベットの場合は、数値に変換して返却する。（A=1, B=2 ... Z=26, AA=27）', () => {
+            assert(toOrdinalNumber('A') === 1);
+            assert(toOrdinalNumber('a') === 1);
+            assert(toOrdinalNumber('Z') === 26);
+            assert(toOrdinalNumber('AA') === 27);
+            assert(toOrdinalNumber('BA') === 53);
         });
 
-        it('引数が整数の場合は、その数値を返却する。', function() {
-            expect(toOrdinalNumber(5)).to.equal(5);
-            expect(toOrdinalNumber('5')).to.equal(5);
+        it('引数が整数の場合は、その数値を返却する。', () => {
+            assert(toOrdinalNumber(5) === 5);
+            assert(toOrdinalNumber('5') === 5);
         });
 
-        it('引数がない、またはアルファベットか整数でない場合は、Errorを投げる。', function() {
-            expect(function() { toOrdinalNumber(); }).to.throw(Error);
-            expect(function() { toOrdinalNumber(1.5); }).to.throw(Error);
-            expect(function() { toOrdinalNumber('あ'); }).to.throw(Error);
+        it('引数がない、またはアルファベットか整数でない場合は、Errorを投げる。', () => {
+            assert.throws(() => toOrdinalNumber());
+            assert.throws(() => toOrdinalNumber(1.5));
+            assert.throws(() => toOrdinalNumber('あ'));
         });
 
-        it('引数が0の場合は、Errorを投げる。', function() {
-            expect(function() { toOrdinalNumber(0); }).to.throw(Error);
-        });
-    });
-
-    describe('private toOrdinalAlphabet(ordinalNumber)', function() {
-        var toOrdinalAlphabet = rewire(utilsModulePath).__get__('toOrdinalAlphabet');
-
-        it('引数が整数の場合は、アルファベットに変換して返却する。（1=A, 2=B ... 26=Z, 27=AA）', function() {
-            expect(toOrdinalAlphabet(1)).to.equal('A');
-            expect(toOrdinalAlphabet('1')).to.equal('A');
-            expect(toOrdinalAlphabet(26)).to.equal('Z');
-            expect(toOrdinalAlphabet(27)).to.equal('AA');
-            expect(toOrdinalAlphabet(53)).to.equal('BA');
-        });
-
-        it('引数がアルファベットの場合は、その文字列を返却する。', function() {
-            expect(toOrdinalAlphabet('AA')).to.equal('AA');
-        });
-
-        it('引数に含まれる小文字のアルファベットは、大文字に変換して返却する。', function() {
-            expect(toOrdinalAlphabet('Aa')).to.equal('AA');
-        });
-
-        it('引数がない場合は、Errorを投げる。', function() {
-            expect(function() { toOrdinalAlphabet(); }).to.throw(Error);
-            expect(function() { toOrdinalAlphabet('あ'); }).to.throw(Error);
-        });
-
-        it('引数が整数またはアルファベットのみでない場合は、Errorを投げる。', function() {
-            expect(function() { toOrdinalAlphabet(1.5); }).to.throw(Error);
-            expect(function() { toOrdinalAlphabet('A9'); }).to.throw(Error);
-            expect(function() { toOrdinalAlphabet('あ'); }).to.throw(Error);
-        });
-
-        it('引数が0の場合は、Errorを投げる。', function() {
-            expect(function() { toOrdinalAlphabet(0); }).to.throw(Error);
+        it('引数が0の場合は、Errorを投げる。', () => {
+            assert.throws(() => toOrdinalNumber(0));
         });
     });
 
-    describe('Ordinal(ordinalData)', function() {
-        describe('[new] Ordinal(ordinalData)', function() {
-            it('Ordinalオブジェクト（インスタンス）を返却する。', function() {
-                expect(new utils.Ordinal(1)).to.be.an.instanceof(utils.Ordinal);
+    describe('private toOrdinalAlphabet(ordinalNumber)', () => {
+        const toOrdinalAlphabet = rewire(utilsModulePath).__get__('toOrdinalAlphabet');
+
+        it('引数が整数の場合は、アルファベットに変換して返却する。（1=A, 2=B ... 26=Z, 27=AA）', () => {
+            assert(toOrdinalAlphabet(1) === 'A');
+            assert(toOrdinalAlphabet('1') === 'A');
+            assert(toOrdinalAlphabet(26) === 'Z');
+            assert(toOrdinalAlphabet(27) === 'AA');
+            assert(toOrdinalAlphabet(53) === 'BA');
+        });
+
+        it('引数がアルファベットの場合は、その文字列を返却する。', () => {
+            assert(toOrdinalAlphabet('AA') === 'AA');
+        });
+
+        it('引数に含まれる小文字のアルファベットは、大文字に変換して返却する。', () => {
+            assert(toOrdinalAlphabet('Aa') === 'AA');
+        });
+
+        it('引数がない場合は、Errorを投げる。', () => {
+            assert.throws(() => toOrdinalAlphabet());
+            assert.throws(() => toOrdinalAlphabet('あ'));
+        });
+
+        it('引数が整数またはアルファベットのみでない場合は、Errorを投げる。', () => {
+            assert.throws(() => toOrdinalAlphabet(1.5));
+            assert.throws(() => toOrdinalAlphabet('A9'));
+            assert.throws(() => toOrdinalAlphabet('あ'));
+        });
+
+        it('引数が0の場合は、Errorを投げる。', () => {
+            assert.throws(() => toOrdinalAlphabet(0));
+        });
+    });
+
+    describe('Ordinal(ordinalData)', () => {
+        describe('[new] Ordinal(ordinalData)', () => {
+            it('Ordinalオブジェクト（インスタンス）を返却する。', () => {
+                assert(new utils.Ordinal(1) instanceof utils.Ordinal);
             });
 
-            it('newは省略可能である。（内部的に強制される）', function() {
-                expect(utils.Ordinal(1)).to.be.an.instanceof(utils.Ordinal);
+            it('newは省略可能である。（内部的に強制される）', () => {
+                assert(utils.Ordinal(1) instanceof utils.Ordinal);
             });
 
-            it('引数がない、またはアルファベットか0より大きな整数でない場合は、Errorを投げる。', function() {
-                expect(function() { utils.Ordinal(); }).to.throw(Error);
-                expect(function() { utils.Ordinal(0); }).to.throw(Error);
-                expect(function() { utils.Ordinal(1.5); }).to.throw(Error);
-                expect(function() { utils.Ordinal('A9'); }).to.throw(Error);
-                expect(function() { utils.Ordinal('あ'); }).to.throw(Error);
+            it('引数がない、またはアルファベットか0より大きな整数でない場合は、Errorを投げる。', () => {
+                assert.throws(() => utils.Ordinal());
+                assert.throws(() => utils.Ordinal(0));
+                assert.throws(() => utils.Ordinal(1.5));
+                assert.throws(() => utils.Ordinal('A9'));
+                assert.throws(() => utils.Ordinal('あ'));
             });
         });
 
-        describe('.toNumber()', function() {
-            it('Ordinal()の引数で与えられた値を、数値に変換して返却する。', function() {
-                expect(utils.Ordinal(10).toNumber()).to.equal(10);
-                expect(utils.Ordinal('A').toNumber()).to.equal(1);
+        describe('.toNumber()', () => {
+            it('Ordinal()の引数で与えられた値を、数値に変換して返却する。', () => {
+                assert(utils.Ordinal(10).toNumber() === 10);
+                assert(utils.Ordinal('A').toNumber() === 1);
             });
         });
 
-        describe('.toAlphabet()', function() {
-            it('Ordinal()の引数で与えられた値を、アルファベットに変換して返却する。', function() {
-                expect(utils.Ordinal('A').toAlphabet()).to.equal('A');
-                expect(utils.Ordinal(1).toAlphabet()).to.equal('A');
+        describe('.toAlphabet()', () => {
+            it('Ordinal()の引数で与えられた値を、アルファベットに変換して返却する。', () => {
+                assert(utils.Ordinal('A').toAlphabet() === 'A');
+                assert(utils.Ordinal(1).toAlphabet() === 'A');
             });
         });
     });
 
-    describe('formatRecordByColumnLabel(recode)', function() {
-        it('recodeの内容を、Excel上のカラム表示（A,B ...）にあわせてオブジェクトに格納し返却する。', function() {
-            expect(utils.formatRecordByColumnLabel(['1', 'a', 'あ']))
-                .to.deep.equal({A: '1', B: 'a', C: 'あ'});
+    describe('formatRecordByColumnLabel(recode)', () => {
+        it('recodeの内容を、Excel上のカラム表示（A,B ...）にあわせてオブジェクトに格納し返却する。', () => {
+            assert.deepEqual(
+                utils.formatRecordByColumnLabel(['1', 'a', 'あ']),
+                {A: '1', B: 'a', C: 'あ'}
+            );
         });
     });
 
-    describe('formatRecordByMapping(recode, mapping)', function() {
-        it('recordの内容を、mappingで対応づけられたKey名にあわせてオブジェクトに格納し返却する。', function() {
-            expect(utils.formatRecordByMapping(['1', 'a', 'あ'], {colB: 'B', colC: 'C'}))
-                .to.deep.equal({colB: 'a', colC: 'あ'});
+    describe('formatRecordByMapping(recode, mapping)', () => {
+        it('recordの内容を、mappingで対応づけられたKey名にあわせてオブジェクトに格納し返却する。', () => {
+            assert.deepEqual(
+                utils.formatRecordByMapping(['1', 'a', 'あ'], {colB: 'B', colC: 'C'}),
+                {colB: 'a', colC: 'あ'}
+            );
         });
     });
 });

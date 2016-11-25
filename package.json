@@ -4,7 +4,7 @@
   "description": "Convert xlsx to JSON.",
   "main": "lib/xlsx2json.js",
   "engines": {
-    "node" : ">=6.9.1"
+    "node": ">=6.9.1"
   },
   "dependencies": {
     "csv-parse": "^1.1.7",
@@ -13,10 +13,11 @@
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
     "coveralls": "^2.11.2",
+    "intelli-espower-loader": "^1.0.1",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
+    "power-assert": "^1.4.2",
     "rewire": "^2.3.1"
   },
   "scripts": {

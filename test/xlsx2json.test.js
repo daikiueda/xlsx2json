@@ -1,125 +1,136 @@
+/* global describe, it */
+
 'use strict';
 
-var expect = require('chai').expect,
+const assert = require('power-assert'),
     xlsx2json = require('../lib/xlsx2json.js');
 
-describe('xlsx2json(pathToXlsx, [options], [callback])', function() {
+describe('xlsx2json(pathToXlsx, [options], [callback])', () => {
 
-    describe('Arguments', function() {
-        it('xlsx2json(pathToXlsx)', function(done) {
-            xlsx2json('test/xlsx/data_only.xlsx').done(function(jsonValueArray) {
-                expect(jsonValueArray).to.deep.equal([
-                    {A: 'value of A1', B: 'value of B1', C: 'value of C1'},
-                    {A: 'value of A2', B: 'value of B2', C: 'value of C2'}
-                ]);
+    describe('Arguments', () => {
+        it('xlsx2json(pathToXlsx)', done => {
+            xlsx2json('test/xlsx/data_only.xlsx').done(jsonValueArray => {
+                assert.deepEqual(
+                    jsonValueArray,
+                    [
+                        {A: 'value of A1', B: 'value of B1', C: 'value of C1'},
+                        {A: 'value of A2', B: 'value of B2', C: 'value of C2'}
+                    ]
+                );
                 done();
             });
         });
 
-        it('xlsx2json(pathToXlsx, options)', function(done) {
-            xlsx2json('test/xlsx/with_keys_row.xlsx', {keysRow: 1}).done(function(jsonValueArray) {
-                expect(jsonValueArray).to.deep.equal([
-                    {'columnA': 'value 1-A', 'column B': 'value 1-B', 'column-C': 'value 1-C'},
-                    {'columnA': 'value 2-A', 'column B': 'value 2-B', 'column-C': 'value 2-C'}
-                ]);
+        it('xlsx2json(pathToXlsx, options)', done => {
+            xlsx2json('test/xlsx/with_keys_row.xlsx', {keysRow: 1}).done(jsonValueArray => {
+                assert.deepEqual(
+                    jsonValueArray,
+                    [
+                        {'columnA': 'value 1-A', 'column B': 'value 1-B', 'column-C': 'value 1-C'},
+                        {'columnA': 'value 2-A', 'column B': 'value 2-B', 'column-C': 'value 2-C'}
+                    ]
+                );
                 done();
             });
         });
 
-        it('xlsx2json(pathToXlsx, callback)', function(done) {
-            xlsx2json('test/xlsx/data_only.xlsx', function(error, jsonValueArray) {
-                expect(jsonValueArray).to.be.an('array');
+        it('xlsx2json(pathToXlsx, callback)', done => {
+            xlsx2json('test/xlsx/data_only.xlsx', (error, jsonValueArray) => {
+                assert(jsonValueArray instanceof Array);
                 done();
             });
         });
 
-        it('xlsx2json(pathToXlsx, options, callback)', function(done) {
-            xlsx2json('test/xlsx/with_keys_row.xlsx', {keysRow: 1}, function(error, jsonValueArray) {
-                expect(jsonValueArray[1]).to.have.property('column-C').and.equal('value 2-C');
+        it('xlsx2json(pathToXlsx, options, callback)', done => {
+            xlsx2json('test/xlsx/with_keys_row.xlsx', {keysRow: 1}, (error, jsonValueArray) => {
+                assert(jsonValueArray[1]['column-C'] === 'value 2-C');
                 done();
             });
         });
 
-        it('* Throw error, when invalid argument types are passed.', function() {
-            expect(function() { xlsx2json(); }).to.throw(Error);
+        it('* Throw error, when invalid argument types are passed.', () => {
+            assert.throws(() => xlsx2json());
         });
 
-        it('* 引数を4つ以上わたされても、問題はない。', function() {
-            expect(function() {
-                xlsx2json('test/xlsx/data_only.xlsx', {}, function() {}, 'dummy argument');
-            }).to.not.throw(Error);
+        it('* 引数を4つ以上わたされても、問題はない。', () => {
+            assert.doesNotThrow(() => xlsx2json('test/xlsx/data_only.xlsx', {}, () => {}, 'dummy argument'));
         });
 
-        describe('pathToXlsx', function() {
-            it('指定されたパスに正常な.xlsxファイルが存在する場合は、該当ファイルの読み込み処理を開始する。', function(done) {
-                xlsx2json('test/xlsx/data_only.xlsx').done(function(jsonValueArray) {
-                    expect(jsonValueArray).to.be.an('array');
+        describe('pathToXlsx', () => {
+            it('指定されたパスに正常な.xlsxファイルが存在する場合は、該当ファイルの読み込み処理を開始する。', done => {
+                xlsx2json('test/xlsx/data_only.xlsx').done(jsonValueArray => {
+                    assert(jsonValueArray instanceof Array);
                     done();
                 });
             });
 
-            describe('* if a file processing error occurred, callback function is called and promise is rejected.', function() {
-                it('コールバック関数が呼び出される。その際、引数でErrorオブジェクトが渡される。', function(done) {
-                    xlsx2json('test/xlsx/__file_not_found__', function(error) {
-                        expect(error).to.be.an.instanceof(Error);
+            describe('* if a file processing error occurred, callback function is called and promise is rejected.', () => {
+                it('コールバック関数が呼び出される。その際、引数でErrorオブジェクトが渡される。', done => {
+                    xlsx2json('test/xlsx/__file_not_found__', error => {
+                        assert(error instanceof Error);
                         done();
                     });
                 });
 
-                it('関数実行時に返却されたQ.Promiseがリジェクトされる。その際、引数でErrorオブジェクトが渡される。', function(done) {
-                    xlsx2json('test/xlsx/__file_not_found__').fail(function(error) {
-                        expect(error).to.be.an.instanceof(Error);
+                it('関数実行時に返却されたQ.Promiseがリジェクトされる。その際、引数でErrorオブジェクトが渡される。', done => {
+                    xlsx2json('test/xlsx/__file_not_found__').fail(error => {
+                        assert(error instanceof Error);
                         done();
                     });
                 });
             });
         });
 
-        describe('options', function() {
-            describe('keysRow: {Number} (*one-based row position)', function() {
-                it('指定された行の各セルの値を、返却するオブジェクトの各key名にする。', function(done) {
+        describe('options', () => {
+            describe('keysRow: {Number} (*one-based row position)', () => {
+                it('指定された行の各セルの値を、返却するオブジェクトの各key名にする。', done => {
                     xlsx2json(
                         'test/xlsx/with_keys_row.xlsx',
                         {keysRow: 1},
-                        function(error, jsonValueArray) {
-                            //expect( jsonValueArray[ 0 ] ).to.have.keys( 'columnA', 'column B', 'column-C' );
-                            expect(jsonValueArray).to.deep.equal([
-                                {'columnA': 'value 1-A', 'column B': 'value 1-B', 'column-C': 'value 1-C'},
-                                {'columnA': 'value 2-A', 'column B': 'value 2-B', 'column-C': 'value 2-C'}
-                            ]);
+                        (error, jsonValueArray) => {
+                            assert.deepEqual(
+                                jsonValueArray,
+                                [
+                                    {'columnA': 'value 1-A', 'column B': 'value 1-B', 'column-C': 'value 1-C'},
+                                    {'columnA': 'value 2-A', 'column B': 'value 2-B', 'column-C': 'value 2-C'}
+                                ]
+                            );
                             done();
                         }
                     );
                 });
 
-                it('指定された行に空のセルがある場合、該当するカラムの内容は、返却するオブジェクトに含めない。', function(done) {
+                it('指定された行に空のセルがある場合、該当するカラムの内容は、返却するオブジェクトに含めない。', done => {
                     xlsx2json(
                         'test/xlsx/with_keys_row_include_empty_cell.xlsx',
                         {keysRow: 1},
-                        function(error, jsonValueArray) {
-                            expect(jsonValueArray).to.deep.equal([
-                                {'columnA': 'value 1-A', 'column-C': 'value 1-C'},
-                                {'columnA': 'value 2-A', 'column-C': 'value 2-C'}
-                            ]);
+                        (error, jsonValueArray) => {
+                            assert.deepEqual(
+                                jsonValueArray,
+                                [
+                                    {'columnA': 'value 1-A', 'column-C': 'value 1-C'},
+                                    {'columnA': 'value 2-A', 'column-C': 'value 2-C'}
+                                ]
+                            );
                             done();
                         }
                     );
                 });
 
-                it('指定された行は、返却される配列から除外される。', function(done) {
+                it('指定された行は、返却される配列から除外される。', done => {
                     xlsx2json(
                         'test/xlsx/with_keys_row.xlsx',
                         {keysRow: 1},
-                        function(error, jsonValueArray) {
-                            expect(jsonValueArray).to.have.length(2);
+                        (error, jsonValueArray) => {
+                            assert(jsonValueArray.length === 2);
                             done();
                         }
                     );
                 });
             });
 
-            describe('mapping: {Object}', function() {
-                it('マッピングで示されたkeyに、該当するカラム位置の内容を格納する。', function(done) {
+            describe('mapping: {Object}', () => {
+                it('マッピングで示されたkeyに、該当するカラム位置の内容を格納する。', done => {
                     xlsx2json(
                         'test/xlsx/data_only.xlsx',
                         {
@@ -129,17 +140,20 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', function() {
                                 columnC: '3'
                             }
                         },
-                        function(error, jsonValueArray) {
-                            expect(jsonValueArray).to.deep.equal([
-                                {'columnA': 'value of A1', 'columnB': 'value of B1', 'columnC': 'value of C1'},
-                                {'columnA': 'value of A2', 'columnB': 'value of B2', 'columnC': 'value of C2'}
-                            ]);
+                        (error, jsonValueArray) => {
+                            assert.deepEqual(
+                                jsonValueArray,
+                                [
+                                    {'columnA': 'value of A1', 'columnB': 'value of B1', 'columnC': 'value of C1'},
+                                    {'columnA': 'value of A2', 'columnB': 'value of B2', 'columnC': 'value of C2'}
+                                ]
+                            );
                             done();
                         }
                     );
                 });
 
-                it('マッピングで指定されないカラムは、返却するオブジェクトに含めない。', function(done) {
+                it('マッピングで指定されないカラムは、返却するオブジェクトに含めない。', done => {
                     xlsx2json(
                         'test/xlsx/data_only.xlsx',
                         {
@@ -148,62 +162,71 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', function() {
                                 columnC: '3'
                             }
                         },
-                        function(error, jsonValueArray) {
-                            expect(jsonValueArray).to.deep.equal([
-                                {'columnA': 'value of A1', 'columnC': 'value of C1'},
-                                {'columnA': 'value of A2', 'columnC': 'value of C2'}
-                            ]);
+                        (error, jsonValueArray) => {
+                            assert.deepEqual(
+                                jsonValueArray,
+                                    [
+                                    {'columnA': 'value of A1', 'columnC': 'value of C1'},
+                                    {'columnA': 'value of A2', 'columnC': 'value of C2'}
+                                ]
+                            );
                             done();
                         }
                     );
                 });
 
-                describe('If both keysRow and mapping is specified.', function() {
-                    it('keysRowで指定された行の各セルの値に、mappingで指定されたkeyを加えたものを、返却するオブジェクトのkey名にする。', function(done) {
+                describe('If both keysRow and mapping is specified.', () => {
+                    it('keysRowで指定された行の各セルの値に、mappingで指定されたkeyを加えたものを、返却するオブジェクトのkey名にする。', done => {
                         xlsx2json(
                             'test/xlsx/with_keys_row.xlsx',
                             {
                                 keysRow: 1,
                                 mapping: {mappedA: 'A'}
                             },
-                            function(error, jsonValueArray) {
-                                expect(jsonValueArray).to.deep.equal([
-                                    {
-                                        'mappedA': 'value 1-A',
-                                        'columnA': 'value 1-A',
-                                        'column B': 'value 1-B',
-                                        'column-C': 'value 1-C'
-                                    },
-                                    {
-                                        'mappedA': 'value 2-A',
-                                        'columnA': 'value 2-A',
-                                        'column B': 'value 2-B',
-                                        'column-C': 'value 2-C'
-                                    }
-                                ]);
+                            (error, jsonValueArray) => {
+                                assert.deepEqual(
+                                    jsonValueArray,
+                                    [
+                                        {
+                                            'mappedA': 'value 1-A',
+                                            'columnA': 'value 1-A',
+                                            'column B': 'value 1-B',
+                                            'column-C': 'value 1-C'
+                                        },
+                                        {
+                                            'mappedA': 'value 2-A',
+                                            'columnA': 'value 2-A',
+                                            'column B': 'value 2-B',
+                                            'column-C': 'value 2-C'
+                                        }
+                                    ]
+                                );
                                 done();
                             }
                         );
                     });
 
-                    it('keysRowとmappingで、key名が重複する場合は、mappingによるカラム位置指定を優先する。', function(done) {
+                    it('keysRowとmappingで、key名が重複する場合は、mappingによるカラム位置指定を優先する。', done => {
                         xlsx2json(
                             'test/xlsx/with_keys_row.xlsx',
                             {
                                 keysRow: 1,
                                 mapping: {'column B': 'A'}
                             },
-                            function(error, jsonValueArray) {
-                                expect(jsonValueArray).to.deep.equal([
-                                    {'columnA': 'value 1-A', 'column B': 'value 1-A', 'column-C': 'value 1-C'},
-                                    {'columnA': 'value 2-A', 'column B': 'value 2-A', 'column-C': 'value 2-C'}
-                                ]);
+                            (error, jsonValueArray) => {
+                                assert.deepEqual(
+                                    jsonValueArray,
+                                    [
+                                        {'columnA': 'value 1-A', 'column B': 'value 1-A', 'column-C': 'value 1-C'},
+                                        {'columnA': 'value 2-A', 'column B': 'value 2-A', 'column-C': 'value 2-C'}
+                                    ]
+                                );
                                 done();
                             }
                         );
                     });
 
-                    it('mappingでカラム位置に「0」を指定されたkeyがある場合、該当するカラム位置の内容は、返却するオブジェクトから除外する。', function(done) {
+                    it('mappingでカラム位置に「0」を指定されたkeyがある場合、該当するカラム位置の内容は、返却するオブジェクトから除外する。', done => {
                         xlsx2json(
                             'test/xlsx/with_keys_row.xlsx',
                             {
@@ -213,11 +236,14 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', function() {
                                     'column B': 0
                                 }
                             },
-                            function(error, jsonValueArray) {
-                                expect(jsonValueArray).to.deep.equal([
-                                    {'column-C': 'value 1-C'},
-                                    {'column-C': 'value 2-C'}
-                                ]);
+                            (error, jsonValueArray) => {
+                                assert.deepEqual(
+                                    jsonValueArray,
+                                    [
+                                        {'column-C': 'value 1-C'},
+                                        {'column-C': 'value 2-C'}
+                                    ]
+                                );
                                 done();
                             }
                         );
@@ -225,18 +251,21 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', function() {
                 });
             });
 
-            describe('dataStartingRow: {Number} (*one-based row position)', function() {
-                it('指定された行を、内容を取得する最初の位置にする。', function(done) {
+            describe('dataStartingRow: {Number} (*one-based row position)', () => {
+                it('指定された行を、内容を取得する最初の位置にする。', done => {
                     xlsx2json(
                         'test/xlsx/with_header_information.xlsx',
                         {
                             dataStartingRow: 3
                         },
-                        function(error, jsonValueArray) {
-                            expect(jsonValueArray).to.deep.equal([
-                                {'A': 'value 1-A', 'B': 'value 1-B', 'C': 'value 1-C'},
-                                {'A': 'value 2-A', 'B': 'value 2-B', 'C': 'value 2-C'}
-                            ]);
+                        (error, jsonValueArray) => {
+                            assert.deepEqual(
+                                jsonValueArray,
+                                [
+                                    {'A': 'value 1-A', 'B': 'value 1-B', 'C': 'value 1-C'},
+                                    {'A': 'value 2-A', 'B': 'value 2-B', 'C': 'value 2-C'}
+                                ]
+                            );
                             done();
                         }
                     );
@@ -244,18 +273,18 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', function() {
             });
         });
 
-        describe('callback', function() {
-            describe('function(error, jsonValueArray){ ... }', function() {
-                it('success', function(done) {
-                    xlsx2json('test/xlsx/data_only.xlsx', function(error, jsonValueArray) {
-                        expect(jsonValueArray).to.be.an('array');
+        describe('callback', () => {
+            describe('function(error, jsonValueArray){ ... }', () => {
+                it('success', done => {
+                    xlsx2json('test/xlsx/data_only.xlsx', (error, jsonValueArray) => {
+                        assert(jsonValueArray instanceof Array);
                         done();
                     });
                 });
 
-                it('error', function(done) {
+                it('error', done => {
                     xlsx2json('test/xlsx/invalid_file_type.txt', function(error) {
-                        expect(error).to.be.an.instanceof(Error);
+                        assert(error instanceof Error);
                         done();
                     });
                 });
@@ -263,39 +292,42 @@ describe('xlsx2json(pathToXlsx, [options], [callback])', function() {
         });
     });
 
-    describe('Returns', function() {
-        describe('promise (*Q promise - http://documentup.com/kriskowal/q/)', function() {
-            it('.done( function( jsonValueArray ){ ... } )', function(done) {
-                xlsx2json('test/xlsx/data_only.xlsx').done(function(jsonValueArray) {
-                    expect(jsonValueArray).to.be.an('array');
+    describe('Returns', () => {
+        describe('promise (*Q promise - http://documentup.com/kriskowal/q/)', () => {
+            it('.done( function( jsonValueArray ){ ... } )', done => {
+                xlsx2json('test/xlsx/data_only.xlsx').done(jsonValueArray => {
+                    assert(jsonValueArray instanceof Array);
                     done();
                 });
             });
-            it('.fail( function( error ){ ... } )', function(done) {
+            it('.fail( function( error ){ ... } )', done => {
                 xlsx2json('test/xlsx/invalid_file_type.txt').fail(function(error) {
-                    expect(error).to.be.an.instanceof(Error);
+                    assert(error instanceof Error);
                     done();
                 });
             });
         });
     });
 
-    describe('* extra', function() {
-        it('日本語文字が含まれるExcelデータも、問題なく処理する。', function(done) {
+    describe('* extra', () => {
+        it('日本語文字が含まれるExcelデータも、問題なく処理する。', done => {
             xlsx2json(
                 'test/xlsx/japanese_characters.xlsx',
                 {
                     keysRow: 3,
                     dataStartingRow: 4
                 },
-                function(error, jsonValueArray) {
-                    expect(jsonValueArray).to.deep.equal([
-                        {'カラムA': '1-Aの値', 'カラム B': '1-Bの値', 'カラム-C': '1-Cの値'},
-                        {'カラムA': '2-Aの値', 'カラム B': '2-Bの値', 'カラム-C': '2-Cの値'}
-                    ]);
+                (error, jsonValueArray) => {
+                    assert.deepEqual(
+                        jsonValueArray,
+                        [
+                            {'カラムA': '1-Aの値', 'カラム B': '1-Bの値', 'カラム-C': '1-Cの値'},
+                            {'カラムA': '2-Aの値', 'カラム B': '2-Bの値', 'カラム-C': '2-Cの値'}
+                        ]
+                    );
                     done();
                 }
-            )
+            );
         });
     });
 });

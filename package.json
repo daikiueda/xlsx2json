@@ -7,7 +7,7 @@
     "node": ">=20.9.0"
   },
   "dependencies": {
-    "csv-parse": "^4.16.3",
+    "csv-parse": "^5.5.5",
     "memoizee": "^0.4.15",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   },
